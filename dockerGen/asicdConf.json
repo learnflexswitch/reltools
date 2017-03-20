@@ -1,0 +1,13 @@
+{
+  "PluginList": [
+    "linux"
+  ],
+  "IfNamePrefix": {
+    "eth": "all"
+  },
+  "MaxPorts": 256,
+  "MacFlapDisablePort": false,
+  "SysRsvdVlanRange": "3050-4050",
+  "SwitchMac": "08:00:27:8f:dc:e3"
+}
+

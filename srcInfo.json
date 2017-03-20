@@ -1,0 +1,17 @@
+{
+    "repos": {
+        "snaproute": [
+            "docs", 
+            "l2", 
+            "l3", 
+            "utils", 
+            "asicd", 
+            "config", 
+            "models", 
+            "infra", 
+            "flexSdk", 
+            "apps"
+        ]
+    }, 
+    "srcLocation": "/snaproute/src/"
+}

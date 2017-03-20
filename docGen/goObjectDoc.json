@@ -1,0 +1,274 @@
+{
+	"GoObjectList": [
+		{
+			"StructName": "AlarmState",
+			"Valid": true,
+			"Class": "FaultAlarm"
+		},
+		{
+			"StructName": "ApiInfoState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "AsicGlobalPM",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "AsicGlobalPMState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "AsicGlobalState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "ComponentLogging",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "ConfigLogState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "DWDMModule",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleClntIntf",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleClntIntfState",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleNwIntf",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleNwIntfPMState",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleNwIntfState",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DWDMModuleState",
+			"Valid": true,
+			"Class": "Optical"
+		},
+		{
+			"StructName": "DaemonState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "EthernetPM",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "EthernetPMState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "FMgrGlobal",
+			"Valid": true,
+			"Class": "FaultAlarm"
+		},
+		{
+			"StructName": "FanSensor",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "FanSensorPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "FanSensorState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "FaultState",
+			"Valid": true,
+			"Class": "FaultAlarm"
+		},
+		{
+			"StructName": "LLDPGlobal",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "LLDPGlobalState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "LLDPIntf",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "LLDPIntfState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "MacTableEntryState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "NotifierEnable",
+			"Valid": true,
+			"Class": "FaultAlarm"
+		},
+		{
+			"StructName": "PlatformMgmtDeviceState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "Port",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "PortState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "PowerConverterSensor",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "PowerConverterSensorPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "PowerConverterSensorState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "Qsfp",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "QsfpChannel",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "QsfpChannelPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "QsfpChannelState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "QsfpPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "QsfpState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "SystemParam",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "SystemParamState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "SystemStatusState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "SystemSwVersionState",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "TemperatureSensor",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "TemperatureSensorState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "TemperatureSensorPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "Vlan",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "VlanState",
+			"Valid": true,
+			"Class": "Ethernet"
+		},
+		{
+			"StructName": "VoltageSensor",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "VoltageSensorPMDataState",
+			"Valid": true,
+			"Class": "Performance"
+		},
+		{
+			"StructName": "VoltageSensorState",
+			"Valid": true,
+			"Class": "Platform"
+		},
+		{
+			"StructName": "XponderGlobal",
+			"Valid": true,
+			"Class": "System"
+		},
+		{
+			"StructName": "XponderGlobalState",
+			"Valid": true,
+			"Class": "System"
+		}
+	]
+}

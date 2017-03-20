@@ -1,0 +1,45 @@
+#!/usr/bin/python                                                                                                       
+import requests
+import json
+import urllib2
+from flexswitchV2 import FlexSwitch
+from tablePrint import *
+
+headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
+class FlexSwitchShow( object):
+    httpSuccessCodes = [200, 201, 202, 204]
+    def  __init__ (self, ip, port):
+        self.swtch = FlexSwitch(ip, port)
+
+    def tblPrintObject(self, objName, headers, valuesList):
+        '''
+        Prints the data in a table format
+        objName - Object which is being printed
+        keys - This will be the attributes of the obj and column names
+        valueList - List of tuples containing the data to be put into
+                    the rows.  Each attribute must be in string format
+        '''
+
+        def terminal_size():
+            import fcntl, termios, struct
+            h, w, hp, wp = struct.unpack('HHHH',
+                fcntl.ioctl(0, termios.TIOCGWINSZ,
+                struct.pack('HHHH', 0, 0, 0, 0)))
+            return h, w
+
+        labels = headers
+        rows=valuesList
+
+        height, width = terminal_size()
+        if labels:
+            width = (width / len(labels)) + 5
+            print indent([labels]+rows, hasHeader=True, separateRows=True,
+                     prefix=' ', postfix=' ', headerChar= '-', delim='    ',
+                 wrapfunc=lambda x: wrap_onspace_strict(x,width))
+        elif rows:
+            width = (width / len(rows[0])) + 5
+            print indent(rows, hasHeader=False, separateRows=True,
+                     prefix=' ', postfix=' ', headerChar= '-', delim='    ',
+                 wrapfunc=lambda x: wrap_onspace_strict(x,width))
+        else:
+            print 'No Data To Display for %s' %(objName)

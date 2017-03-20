@@ -1,0 +1,94 @@
+#!/usr/bin/python
+import requests
+import json
+import urllib2
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+headers = {'Accept' : 'application/json', 'Content-Type' : 'application/json'}
+patchheaders = {'Conent-Type':'application/json-patch+json'}
+#def processReturnCode (method) :
+#    def returnDetails (self, *args, **kwargs) :
+#        r = method(self, *args, **kwargs)
+#        if r.status_code in self.httpSuccessCodes:
+#            return (r.json(), None)
+#        else:
+#            ret = {}
+#            try:
+#                ret = r.json()
+#            except:
+#                print 'Did not receive Json. HTTP Status %s: Code %s ' %(r.reason, r.status_code) 
+#                return ret, r.reason
+#            print 'Error from server. Error code %s, Error Message: %s' %(r.status_code, r.json()['Error']) 
+#            return (r.json(), "Error")
+#    return returnDetails
+class FlexSwitch( object):
+    httpSuccessCodes = [200, 201, 202, 204]
+    def  __init__ (self, ip, port, user=None, passwd=None, timeout=15):
+        self.ip    = ip
+        self.port  = port
+        self.timeout = timeout
+        self.authenticate = False
+        if user is not None:
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+            self.authenticate = True
+            self.user = user
+            self.passwd = passwd
+            self.cfgUrlBase = 'https://%s/public/v1/config/'%(ip)
+            self.stateUrlBase = 'https://%s/public/v1/state/'%(ip)
+            self.actionUrlBase = 'https://%s/public/v1/action/'%(ip)
+        else:
+            self.cfgUrlBase = 'http://%s:%s/public/v1/config/'%(ip,str(port))
+            self.stateUrlBase = 'http://%s:%s/public/v1/state/'%(ip,str(port))
+            self.actionUrlBase = 'http://%s:%s/public/v1/action/'%(ip,str(port))
+
+    def getObjects(self, objName, urlPath):
+        currentMarker = 0
+        nextMarker = 0
+        count = 100
+        more = True
+        entries = []
+        while more == True:
+            more = False
+            qry = '%s/%ss?CurrentMarker=%d&NextMarker=%d&Count=%d' %(urlPath, objName, currentMarker, nextMarker, count)
+            if self.authenticate == True:
+                response = requests.get(qry, timeout=self.timeout, auth=(self.user, self.passwd), varify=False)
+            else:
+                response = requests.get(qry, timeout=self.timeout)
+            if response.status_code in self.httpSuccessCodes:
+                data = response.json()
+                more =  data['MoreExist']
+                currentMarker =  data['NextMarker']
+                NextMarker    =  data['NextMarker']
+                if data['Objects'] != None:
+                    entries.extend(data['Objects'])
+            else:
+                print 'Server returned Error for %s' %(qry)
+        return entries
+
+    def getObject(self, objName, obj, urlPath):
+        qry = '%s/%s' %(urlPath, objName)
+        if self.authenticate == True:
+            response = requests.get(qry, data=json.dumps(obj), headers=headers, timeout=self.timeout, auth=(self.user, self.passwd), verify=False)
+        else:
+            response = requests.get(qry, data=json.dumps(obj), headers=headers, timeout=self.timeout)
+        if response.status_code in self.httpSuccessCodes:
+            data = response.json()
+            if data['Object'] != None:
+                entry = (data['Object'])
+            else:
+                print 'Server returned Error for %s' %(qry)
+        return entry
+
+    def getObjectById(self, objName, Id, urlPath):
+        qry = '%s/%s/%s' %(urlPath, objName, Id)
+        if self.authenticate == True:
+            response = requests.get(qry, headers=headers, timeout=self.timeout, auth=(self.user, self.passwd), verify=False)
+        else:
+            response = requests.get(qry, headers=headers, timeout=self.timeout)
+        if response.status_code in self.httpSuccessCodes:
+            data = response.json()
+            if data['Object'] != None:
+                entry = (data['Object'])
+            else:
+                print 'Server returned Error for %s' %(qry)
+        return entry
