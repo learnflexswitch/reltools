@@ -39,10 +39,10 @@ def setupCliDeps(gitProto='http'):
     usrName = setupHandler().getUsrName()
     if gitProto == 'ssh':
         userRepoPrefix   = 'git@github.com:%s/' % (usrName)
-        remoteRepoPrefix = 'git@github.com:%s/' % ('OpenSnaproute')
+        remoteRepoPrefix = 'git@github.com:%s/' % ('learnflexswitch')
     else:
         userRepoPrefix = 'https://github.com/%s/' % (usrName)
-        remoteRepoPrefix = 'https://github.com/%s/' % ('OpenSnaproute')
+        remoteRepoPrefix = 'https://github.com/%s/' % ('learnflexswitch')
     _setupGitRepo('extPkgs',
                     setupHandler().getExtSrcDir(),
                     userRepoPrefix,
