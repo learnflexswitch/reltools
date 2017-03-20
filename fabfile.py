@@ -37,6 +37,7 @@ def setupExternals(comp=None):
 def setupCliDeps(gitProto='http'):
     print 'Fetching Python dependencies for CLI....'
     usrName = setupHandler().getUsrName()
+    gitProto='http'
     if gitProto == 'ssh':
         userRepoPrefix   = 'git@github.com:%s/' % (usrName)
         remoteRepoPrefix = 'git@github.com:%s/' % ('learnflexswitch')
@@ -50,6 +51,12 @@ def setupCliDeps(gitProto='http'):
 
 def _setupGitRepo(repo, srcDir, userRepoPrefix, remoteRepoPrefix):
     with lcd(srcDir):
+        if remoteRepoPrefix == 'https://github.com//':
+           remoteRepoPrefix = 'https://github.com/learnflexswitch/'
+
+        if userRepoPrefix == 'https://github.com//':
+           userRepoPrefix = 'https://github.com/learnflexswitch/'
+        
         if not (os.path.exists(srcDir + repo)  and os.path.isdir(srcDir+ repo)):
             cmd = 'git clone '+ userRepoPrefix + repo
             local(cmd)
