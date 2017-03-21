@@ -13,10 +13,10 @@ gProto = ''
 
 def _askDetails():
     global gAnchorDir, gGitUsrName, gRole, gProto
-    gAnchorDir = prompt('Host directory:', default='git')
-    gGitUsrName = prompt('Git username:')
-    gProto = prompt('Git Protocol (https/ssh):', default='https')
-    gRole = prompt('SnapRoute Employee (y/n):', default='n')
+    gAnchorDir = 'git' #prompt('Host directory:', default='git')
+    gGitUsrName = '' # prompt('Git username:')
+    gProto = 'https'  #prompt('Git Protocol (https/ssh):', default='https')
+    gRole = 'n'  #prompt('SnapRoute Employee (y/n):', default='n')
 
 def setupHandler():
     global gAnchorDir, gGitUsrName, gRole
@@ -56,7 +56,13 @@ def _setupGitRepo(repo, srcDir, userRepoPrefix, remoteRepoPrefix):
 
         if userRepoPrefix == 'https://github.com//':
            userRepoPrefix = 'https://github.com/learnflexswitch/'
-        
+
+        if not remoteRepoPrefix == 'https://github.com/learnflexswitch/':
+           remoteRepoPrefix = 'https://github.com/learnflexswitch/'
+
+        if not userRepoPrefix ==  'https://github.com/learnflexswitch/':
+            userRepoPrefix = 'https://github.com/learnflexswitch/'
+
         if not (os.path.exists(srcDir + repo)  and os.path.isdir(srcDir+ repo)):
             cmd = 'git clone '+ userRepoPrefix + repo
             local(cmd)
@@ -69,7 +75,6 @@ def _setupGitRepo(repo, srcDir, userRepoPrefix, remoteRepoPrefix):
                                 'git merge upstream/master']
                 for cmd in commandsToSync:
                     local(cmd)
-
 def _getRepoUrlPrefix(proto='http'):
     internalUser = setupHandler().getUsrRole()
     usrName = setupHandler().getUsrName()
@@ -134,13 +139,12 @@ def setupGoDeps(comp=None, gitProto='http'):
             if rp.has_key('renamesrc') and cloned:
                 cmd = 'mv ' + extSrcDir+ rp['renamesrc']+ ' ' + extSrcDir+ rp['renamedst']
                 local(cmd)
-
 def setupSRRepos(gitProto='http', comp=None):
     print 'Fetching Snaproute repositories dependencies....'
     global gAnchorDir, gGitUsrName, gRole
-    gAnchorDir = prompt('Host directory:', default='git')
-    gGitUsrName = prompt('Git username:')
-    gRole = prompt('SnapRoute Employee (y/n):', default='n')
+    gAnchorDir = 'git' #prompt('Host directory:', default='git')
+    gGitUsrName = ''  #prompt('Git username:')
+    gRole = 'n' #prompt('SnapRoute Employee (y/n):', default='n')
     if comp:
         srRepos = [comp]
     else:
@@ -218,8 +222,6 @@ def installThrift():
             local('./configure --with-java=false')
             local('make')
             local('sudo make install')
-
-
 def installNanoMsgLib():
     srcDir = setupHandler().getGoDepDirFor('nanomsg')
     with lcd(srcDir):
@@ -258,7 +260,6 @@ def installIpTables():
             cmdList.append('sudo make install')
             for cmd in cmdList:
                 local(cmd)
-
 def _createDirectoryStructure():
     dirs = setupHandler().getAllSrcDir()
     for everydir in dirs:
@@ -302,3 +303,5 @@ def pushDocker(repo='flex1'):
     cmd = "docker push snapos/flex:"+repo
     local(cmd)
     print "Success..."
+
+					
