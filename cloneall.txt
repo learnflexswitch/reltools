@@ -1,0 +1,15 @@
+#!/bin/bash
+rootpath=/home/flex/git
+if [ -d "$rootpath" ]; then
+  mkdir $rootpath
+fi
+for project in docs test vagrantFlexSwitchDev reltools asicd netlink l3 config gopacket models apps flexSdk \
+    infra utils l2 extpkgs vagrantFlexSwitch pubSubBenchmarking apidocs chaoshoneybadger rpcbenchmarking websocket \
+    redigo libovsdb netfilter sflow net openconfig netns nanomsg pyangbind pyang thrift mux gouuid context go-nanomsg
+do
+  rm -rf "$rootpath/$project"
+  git clone https://github.com/learnflexswitch/"$project".git
+  echo "$project done"
+
+done
+echo "All projects done"
