@@ -1,0 +1,218 @@
+(1).
+ How to build sysd:
+cd ~/git/snaproute/src/infra/sysd
+go build -o /home/flex/git/snaproute/src/flexswitch-flex_2.0.1.172.45//sysd -ldflags="-r /opt/flexswitch/sharedlib:/home/flex/git/external/src/github.com/netfilter/libiptables/lib" main.go
+
+
+(2).  find -name "*.json" |xargs grep  "SystemParam"
+
+./reltools/docGen/goObjectDoc.json
+  {
+    "StructName": "DpiRules",
+    "Valid": true,
+    "Class": "System"
+  },
+  {
+    "StructName": "DpiRulesState",
+    "Valid": true,
+    "Class": "System"
+  }
+
+
+./apps/cfgmon/configOrder.json
+./config/actions/configOrder.json
+"DpiRules"
+
+  
+(3).
+./models/objects/sysObjects.go
+./config/server/configmgr.go ?
+./config/server/localserver.go
+
+./infra/sysd/server/sysInfo.go
+./infra/sysd/rpc/listener.go
+./infra/sysd/server/server.go
+./infra/sysd/rpc/sysd.thrift
+
+
+(a)
+./models/objects/sysObjects.go
+type RuleFile struct {
+  Name   string `DESCRIPTION: "Name of the rule file"`
+  Path   string `DESCRIPTION: "Path of rule file"`kkkk
+  Rules  [] string `DESCRIPTION: "Rules "`
+}
+
+type DpiRulesState struct {
+  baseObj
+  RuleFiles  []RuleFile `DESCRIPTION: "All Rule Files"`
+  Description string `DESCRIPTION: "DpiRulesState Description"`
+}
+
+type DpiRules struct {
+  baseObj
+  RuleFiles  []RuleFile `DESCRIPTION: "All Rule Files"`
+  Description string `DESCRIPTION: "Dpi rules Description"`
+}
+
+
+
+
+
+
+(b) 
+./config/server/configmgr.go
+ mgr.ConstructDpiRuls(clientName)
+
+(c)
+./config/server/localserver.go
+
+func (mgr *ConfigMgr) ConstructDpiRules(clientName string) error {
+    return nil;
+}
+
+
+./infra/sysd/server/sysInfo.go
+
+type DpiRulesUpdate struct {
+    EntriesUpdated []string
+    NewCfg         *objects.DpiRulesS
+}
+
+func listAllFiles(path string) []string {
+
+    fileList := []string{}
+    files, err := ioutil.ReadDir(path)
+    if err != nil {
+       fmt.Println(err)
+    }
+    for _, file := range files {
+        fileList =append( fileList, file.Name())
+    }
+    return fileList
+}
+
+func listAllRules(filename string) [] string {
+   content, err := ioutil.ReadFile(filename)
+   if err != nil {
+      fmt.Println(err)
+      return nil
+   }
+   lines := strings.Split(string(content), "\n")
+   return lines
+
+}
+
+// During Get calls we will use below api to read from run-time information
+func (svr *SYSDServer) GetDpiRules(name string) *objects.DpiRulesState {
+    dpiRulesInfo := new(objects.DpiRulesState)
+    path := "/etc/snort/rules/"
+    files := listAllFiles(path)
+    numFiles := len(files)
+    RuleFiles := []
+    for i := 0; i < numFiles; i++ {
+       rules := listAllRules(path + files[i])
+       rulefile :=  modelObjs.RuleFile{}
+       rulefile.Rules = rules
+       rulefile.Path = path
+       rulefile.Name =  files[i]
+       RuleFiles = append(RuleFiles,rulefile)
+    }
+    dpiRulesInfo.RuleFiles
+    return dpiRulesInfo
+}
+
+
+./infra/sysd/rpc/listener.go
+func convertDpiRulesThriftToModel(cfg *sysd.DpiRules) objects.DpiRules {
+  confg := objects.DpiRules{
+    Description: cfg.Description,
+    RuleFiles:   cfg.RuleFiles,
+  }
+  return confg
+}
+
+func (h *SYSDHandler) CreateDpiRules(cfg *sysd.DpiRules) (bool, error) {
+        if h.server.SystemInfoCreated() {
+                return false, errors.New("DprRules Info is already created for Default VRF, please do update to modify rules")
+        }
+
+        h.logger.Info("Configuring Global Object", cfg)
+        confg := convertSystemParamThriftToModel(cfg)
+        h.server.SystemParamConfig <- confg
+        return true, nil
+}
+
+func (h *SYSDHandler) validatUpdateDpiRules(newCfg *sysd.DpiRules, attrset []bool) ([]string, error) {
+        var updatedInfo []string
+        return updatedInfo, nil
+}
+
+func (h *SYSDHandler) UpdateDpiRules(org *sysd.DpiRuls, new *sysd.DpiRules, attrset []bool,
+         op []*sysd.PatchOpInfo) (bool, error) {
+         h.logger.Info("Received update for DPI information", org, new, attrset)
+         if org == nil || new == nil {
+            return false, errors.New("Invalid information provided to server")
+         }
+         return true, nil
+}
+
+func (h *SYSDHandler) DeleteDpiRules(cfg *sysd.DpiRules) (bool, error) {
+        return false, errors.New("Delete of dpi rules is not supported")
+}
+
+func (h *SYSDHandler) GetBulDpiRulesState(fromIdx sysd.Int, count sysd.Int) (*sysd.DpiRulesStateGetInfo, error) {
+  //@TODO: when we support vrf change get bulk... today only one system info is present
+  dpiRulesResp, err := h.GetDpiRulesState("default")
+  if err != nil {
+    return nil, err
+  }
+  systemGetInfoResp := sysd.NewDpiRulesStateGetInfo()
+  systemGetInfoResp.Count = 1
+  systemGetInfoResp.StartIdx = 0
+  systemGetInfoResp.EndIdx = 1
+  systemGetInfoResp.More = false
+  respList := make([]*sysd.DpiRulesState, 1)
+  //respList = append(respList, sysParamsResp)
+  respList[0] = dpiRulesResp
+  systemGetInfoResp.SystemParamStateList = respList
+  return systemGetInfoResp, nil
+}
+
+
+./infra/sysd/rpc/sysd.thrift
+struct RuleFile {
+        1 : string Name
+        2 : string Path
+        3 : list<string> Rules
+}
+
+struct DpiRules {
+        1 : list<RuleFile>  RuleFiles
+        2 : string Description
+}
+struct DpiRulesState {
+        1 : list<RuleFile> RuleFiles
+        2 : string Description
+}
+
+struct DpiRulesStateGetInfo {
+        1: int StartIdx
+        2: int EndIdx
+        3: int Count
+        4: bool More
+        5: list<DpiRulesState> DpiRulesStateList
+}
+
+service SYSDServices extends sysdInt.SYSDINTServices {
+......
+        //Added for dpi-start
+        bool CreateDpiRules(1: DpiRules config);
+        bool UpdateDpiRules(1: DpiRules origconfig, 2: DpiRules newconfig, 3: list<bool> attrset, 4: list<PatchOpInfo> op);
+        bool DeleteDpiRules(1: DpiRules config);
+
+        DpiRulesStateGetInfo GetBulkDpiRulesState(1: int fromIndex, 2: int count);
+        DpiRulesState GetDpiRulesState(1: string Vrf);
+        //Added for dpi-end
+......
+
