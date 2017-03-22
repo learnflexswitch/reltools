@@ -13,3 +13,37 @@ do
 
 done
 echo "All projects done"
+
+
+package main
+
+import (
+     "os"
+     "fmt"
+)
+
+func mylog(text string) error {
+      path := "/tmp/confd.log"
+      f, err :=  os.OpenFile(path, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660);
+      if err != nil {
+         fmt.Fprintln(os.Stderr, err)
+         return err
+      }
+      defer f.Close()
+
+      _, err = f.WriteString(text + "\n")
+      if err != nil {
+          fmt.Print(os.Stderr,err)
+          return err
+      }
+      return nil
+}
+
+
+func main () {
+     text := "aaaaaaaaaa"
+     mylog(text)
+     mylog("york" + text)
+
+    fmt.Printf("Appended into file\n")
+}
