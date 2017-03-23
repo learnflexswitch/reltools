@@ -6,22 +6,6 @@
     "patch": "0", 
     "platforms": [
         {
-            "odm": "bcm_accton_as5712", 
-            "platform": "dummy"
-        }, 
-        {
-            "odm": "accton_wedge40", 
-            "platform": "dummy"
-        }, 
-        {
-            "odm": "accton_wedge100", 
-            "platform": "dummy"
-        }, 
-        {
-            "odm": "cel_redstone", 
-            "platform": "dummy"
-        }, 
-        {
             "odm": "docker", 
             "platform": "dummy"
         }
