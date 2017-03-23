@@ -119,6 +119,13 @@ def setupGoDeps(comp=None, gitProto='http'):
                 repoUrl = 'git@github.com:%s/%s' % (org, rp['repo'])
             else:
                 repoUrl = 'https://github.com/%s/%s' % (org, rp['repo'])
+
+
+            print 'repoUrl=' + repoUrl
+            if 'https://github.com/learnflexswitch/thrift' == repoUrl :
+                 repoUrl='https://github.com/OpenSnaproute/thrift'
+            print 'repoUrl=' + repoUrl
+ 
             dstDir = rp['renamedst'] if rp.has_key('renamedst') else ''
             dirToMake = dstDir
             cloned = False
