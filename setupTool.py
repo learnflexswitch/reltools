@@ -20,7 +20,7 @@ class setupGenie(object):
             self.org = 'SnapRoute'
         else:
             self.internalUser = False
-            self.org = 'OpenSnapRoute'
+            self.org = 'learnflexswitch'
 
         with open(self.setupInfo) as dataFile:
             self.info = json.load(dataFile)
