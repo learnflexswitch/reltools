@@ -269,6 +269,17 @@
 			"StructName": "XponderGlobalState",
 			"Valid": true,
 			"Class": "System"
-		}
+		},
+                {
+                        "StructName": "DpiRules",
+                        "Valid": true,
+                        "Class": "System"
+                },
+                {
+                        "StructName": "DpiRulesState",
+                        "Valid": true,
+                        "Class": "System"
+                }
+		
 	]
 }
