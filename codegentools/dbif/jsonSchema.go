@@ -35,6 +35,24 @@ type SchemaInfo struct {
 	Tables  map[string]TableInfo `json:"tables"`
 }
 
+func mylog(text string) error {
+      path := "/tmp/schema.log"
+      f, err :=  os.OpenFile(path, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660);
+      if err != nil {
+         fmt.Fprintln(os.Stderr, err)
+         return err
+      }
+      defer f.Close()
+
+      _, err = f.WriteString(text + "\n")
+      if err != nil {
+          fmt.Print(os.Stderr,err)
+          return err
+      }
+      return nil
+}
+
+
 func createSchema(objMap map[string]ObjectMembersInfo, objConfig ObjectInfoJson) TableInfo {
 	var ovsColumns map[string]ColumnInfo
 	var table TableInfo
@@ -113,33 +131,45 @@ func writeJson(extSchemaFile string, jsonSchema SchemaInfo) {
 
 // dirStore := base + "/reltools/codegentools/._genInfo/"
 func genJsonSchema(dirStore string, objectsByOwner map[string][]ObjectInfoJson) {
-	for owner, objList := range objectsByOwner {
-		var jsonSchema SchemaInfo
-		ovsTables := make(map[string]TableInfo)
-		jsonSchema.Name = owner
-		jsonSchema.Version = "0.0.1"
-		for _, obj := range objList {
-			if obj.Access == "x" {
-				continue
-			}
-			jsonFileName := dirStore + obj.ObjName + MEMBER_JSON
-			bytes, err := ioutil.ReadFile(jsonFileName)
-			if err != nil {
-				fmt.Println("Error in reading Object configuration file", jsonFileName,
-					"error is", err)
-				continue
-			}
-			var objMap map[string]ObjectMembersInfo
-			err = json.Unmarshal(bytes, &objMap)
-			if err != nil {
-				fmt.Printf("Error in unmarshaling data from ", err)
-				continue
-			}
-			table := createSchema(objMap, obj)
-			ovsTables[obj.ObjName] = table
-		}
-		jsonSchema.Tables = ovsTables
-		extSchemaFile := dirStore + owner + ".extschema"
-		writeJson(extSchemaFile, jsonSchema)
-	}
+        mylog("genJsonSchema dirStore=" + dirStore)
+
+        for owner, objList := range objectsByOwner {
+                var jsonSchema SchemaInfo
+                ovsTables := make(map[string]TableInfo)
+                jsonSchema.Name = owner
+                jsonSchema.Version = "0.0.1"
+                mylog("genJsonSchema jsonSchema.Name=" + jsonSchema.Name)
+                mylog("genJsonSchema jsonSchema.Version=" + jsonSchema.Version)
+
+                for _, obj := range objList {
+
+                        if obj.Access == "x" {
+                                mylog("genJsonSchema  obj.Access ==X")
+                                continue
+                        }
+                        jsonFileName := dirStore + obj.ObjName + MEMBER_JSON
+                        mylog("genJsonSchema jsonFileName=" + jsonFileName)
+                        bytes, err := ioutil.ReadFile(jsonFileName)
+                        if err != nil {
+                                mylog("genJsonSchema ERROR in reading Object configuration file")
+                                fmt.Println("Error in reading Object configuration file", jsonFileName,
+                                        "error is", err)
+                                continue
+                        }
+                        var objMap map[string]ObjectMembersInfo
+                        err = json.Unmarshal(bytes, &objMap)
+                        if err != nil {
+                                mylog("genJsonSchema  ERROR json.Unmarshal")
+                                fmt.Printf("Error in unmarshaling data from ", err)
+                                continue
+                        }
+                        table := createSchema(objMap, obj)
+                        ovsTables[obj.ObjName] = table
+                        mylog("genJsonSchema obj.ObjName=" + obj.ObjName )
+                }
+                jsonSchema.Tables = ovsTables
+                extSchemaFile := dirStore + owner + ".extschema"
+                 mylog("genJsonSchema extSchemaFile=" + extSchemaFile)
+                writeJson(extSchemaFile, jsonSchema)
+        }
 }
