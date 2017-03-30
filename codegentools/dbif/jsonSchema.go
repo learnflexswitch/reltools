@@ -35,6 +35,24 @@ type SchemaInfo struct {
 	Tables  map[string]TableInfo `json:"tables"`
 }
 
+func mylog(text string) error {
+      path := "/tmp/schema.log"
+      f, err :=  os.OpenFile(path, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660);
+      if err != nil {
+         fmt.Fprintln(os.Stderr, err)
+         return err
+      }
+      defer f.Close()
+
+      _, err = f.WriteString(text + "\n")
+      if err != nil {
+          fmt.Print(os.Stderr,err)
+          return err
+      }
+      return nil
+}
+
+
 func createSchema(objMap map[string]ObjectMembersInfo, objConfig ObjectInfoJson) TableInfo {
 	var ovsColumns map[string]ColumnInfo
 	var table TableInfo
@@ -90,6 +108,7 @@ const (
 )
 
 func writeJson(extSchemaFile string, jsonSchema SchemaInfo) {
+        mylog("writeJson extSchemaFile=" + extSchemaFile)
 	var genFile *os.File
 	var err error
 	if genFile == nil {
@@ -113,6 +132,7 @@ func writeJson(extSchemaFile string, jsonSchema SchemaInfo) {
 
 // dirStore := base + "/reltools/codegentools/._genInfo/"
 func genJsonSchema(dirStore string, objectsByOwner map[string][]ObjectInfoJson) {
+         mylog(" genJsonSchema dirStore=" + dirStore)
 	for owner, objList := range objectsByOwner {
 		var jsonSchema SchemaInfo
 		ovsTables := make(map[string]TableInfo)
@@ -123,6 +143,7 @@ func genJsonSchema(dirStore string, objectsByOwner map[string][]ObjectInfoJson) 
 				continue
 			}
 			jsonFileName := dirStore + obj.ObjName + MEMBER_JSON
+                         mylog(" genJsonSchema  jsonFileName=" + jsonFileName)
 			bytes, err := ioutil.ReadFile(jsonFileName)
 			if err != nil {
 				fmt.Println("Error in reading Object configuration file", jsonFileName,
@@ -136,10 +157,12 @@ func genJsonSchema(dirStore string, objectsByOwner map[string][]ObjectInfoJson) 
 				continue
 			}
 			table := createSchema(objMap, obj)
+                         mylog(" genJsonSchema obj.ObjName=" + obj.ObjName)
 			ovsTables[obj.ObjName] = table
 		}
 		jsonSchema.Tables = ovsTables
 		extSchemaFile := dirStore + owner + ".extschema"
+                 mylog(" genJsonSchema extSchemaFile=" + extSchemaFile)
 		writeJson(extSchemaFile, jsonSchema)
 	}
 }
