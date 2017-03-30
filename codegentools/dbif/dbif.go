@@ -521,7 +521,7 @@ func generateHandCodedObjectsInformation(listingsFd *os.File, objFileBase string
 					str, ok := typ.Type.(*ast.StructType)
 					if ok == true {
 						for _, fld := range str.Fields.List {
-                                                        mylog("YORK. nametyp.Name.Name,  fld.Names=" +  fld.Names)
+                                                        mylog("YORK. nametyp.Name.Name, fld := range str.Fields.List bj.SrcFile=" +  obj.SrcFile)
 							if fld.Names != nil {
 								switch fld.Type.(type) {
 								case *ast.Ident:
