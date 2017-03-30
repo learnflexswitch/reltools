@@ -66,7 +66,8 @@ type RawObjSrcInfo struct {
 func main() {
 	fset := token.NewFileSet() // positions are relative to fset
 	base := os.Getenv("SR_CODE_BASE")
-	if len(base) <= 0 {
+	if len(base) <= 0 {   
+                mylog("  main. Environment Variable SR_CODE_BASE has not been set")
 		fmt.Println(" Environment Variable SR_CODE_BASE has not been set")
 		return
 	}
@@ -75,9 +76,11 @@ func main() {
 	// Create a directory to store all the temporary files
 	//
 	dirStore := base + "/reltools/codegentools/._genInfo/"
+        mylog("  main. dirStore=" + dirStore)
+
 	//os.Mkdir(dirStore, 0777)
 	listingFile := dirStore + "generatedGoFiles.txt"
-
+        mylog("  main.  listingFile=" + listingFile)
 	listingsFd, err := os.OpenFile(listingFile, os.O_RDWR|os.O_APPEND+os.O_CREATE, 0660)
 	if err != nil {
 		fmt.Println("Failed to open the file", listingFile)
@@ -93,7 +96,8 @@ func processConfigObjects(fset *token.FileSet, base string, listingsFd *os.File,
 	var goSrcsMap map[string]RawObjSrcInfo
 	var objMap map[string]ObjectInfoJson
 
-	objJsonFile := base + "/snaproute/src/models/objects/genObjectConfig.json"
+
+        objJsonFile := base + "/snaproute/src/models/objects/genObjectConfig.json"
 	objFileBase := base + "/snaproute/src/models/objects/"
 
 	//
@@ -110,20 +114,26 @@ func processConfigObjects(fset *token.FileSet, base string, listingsFd *os.File,
 	}
 	err = json.Unmarshal(bytes, &goSrcsMap)
 	if err != nil {
+                mylog("processConfigObjects Error in unmarshaling data from " + goObjSources)
 		fmt.Printf("Error in unmarshaling data from ", goObjSources, err)
 	}
 
 	for goSrcFile, ownerName := range goSrcsMap {
+                  mylog("processConfigObjects goSrcFile=" + goSrcFile)
 		generateHandCodedObjectsInformation(listingsFd, objFileBase, goSrcFile, ownerName.Owner)
 	}
 
+
+               
 	bytes, err = ioutil.ReadFile(objJsonFile)
 	if err != nil {
+                mylog("processConfigObjects Error in reading Object json file " + objJsonFile)
 		fmt.Println("Error in reading Object json file", objJsonFile)
 		return
 	}
 	err = json.Unmarshal(bytes, &objMap)
 	if err != nil {
+                mylog("processConfigObjects Error in unmarshaling data from " + objJsonFile)
 		fmt.Printf("Error in unmarshaling data from ", objJsonFile, err)
 	}
 
@@ -132,8 +142,10 @@ func processConfigObjects(fset *token.FileSet, base string, listingsFd *os.File,
 	for name, obj := range objMap {
 		obj.ObjName = name
 		srcFile := objFileBase + obj.SrcFile
+                mylog("processConfigObjects ddd srcFile=" + srcFile)
 		f, err := parser.ParseFile(fset, srcFile, nil, parser.ParseComments)
 		if err != nil {
+                        mylog("processConfigObjects Failed to parse input file ")
 			fmt.Println("Failed to parse input file ", srcFile, err)
 			return
 		}
@@ -190,6 +202,7 @@ func processConfigObjects(fset *token.FileSet, base string, listingsFd *os.File,
 
 	objectsPackage := "objects"
 	generateSerializers(listingsFd, objFileBase, dirStore, objectsByOwner, objectsPackage)
+        mylog("processConfigObjects    dirStore=" + dirStore)
 	genJsonSchema(dirStore, objectsByOwner)
 }
 
@@ -228,8 +241,10 @@ func processActionObjects(fset *token.FileSet, base string, listingsFd *os.File,
 	for name, action := range actionMap {
 		action.ObjName = name
 		srcFile := actionFileBase + action.SrcFile
+                 mylog("processActionObjects name=" + name + ";srcFile=" + srcFile)
 		f, err := parser.ParseFile(fset, srcFile, nil, parser.ParseComments)
 		if err != nil {
+                         mylog("processActionObjects Failed to parse input file")
 			fmt.Println("Failed to parse input file ", srcFile, err)
 			return
 		}
@@ -274,6 +289,7 @@ func processActionObjects(fset *token.FileSet, base string, listingsFd *os.File,
 
 	actionsPackage := "actions"
 	generateSerializers(listingsFd, actionFileBase, dirStore, actionsByOwner, actionsPackage)
+        mylog(" processActionObjects dirStore=" + dirStore)
 	genJsonSchema(dirStore, actionsByOwner)
 }
 
@@ -467,14 +483,17 @@ func generateHandCodedObjectsInformation(listingsFd *os.File, objFileBase string
 
 	// First read the existing objects
 	genObjInfoFile := objFileBase + "genObjectConfig.json"
+        mylog("generateHandCodedObjectsInformation genObjInfoFile=" + genObjInfoFile)
 
 	bytes, err := ioutil.ReadFile(genObjInfoFile)
 	if err != nil {
+                mylog("generateHandCodedObjectsInformation Error in reading Object configuration file")
 		fmt.Println("Error in reading Object configuration file", genObjInfoFile)
 		return err
 	}
 	err = json.Unmarshal(bytes, &objMap)
 	if err != nil {
+                mylog("generateHandCodedObjectsInformation Error in unmarshaling data from ")
 		fmt.Printf("Error in unmarshaling data from ", genObjInfoFile, err)
 	}
 
@@ -483,6 +502,7 @@ func generateHandCodedObjectsInformation(listingsFd *os.File, objFileBase string
 	// Now read the contents of Hand coded Go structures
 	f, err := parser.ParseFile(fset, objFileBase+srcFile, nil, parser.ParseComments)
 	if err != nil {
+                 mylog("generateHandCodedObjectsInformation Failed to parse input file")
 		fmt.Println("Failed to parse input file ", srcFile, err)
 		return err
 	}
@@ -494,12 +514,14 @@ func generateHandCodedObjectsInformation(listingsFd *os.File, objFileBase string
 				switch spec.(type) {
 				case *ast.TypeSpec:
 					obj := ObjectInfoJson{}
-					obj.SrcFile = srcFile
+					obj.SrcFile = srcFile 
+                                        mylog("YORK. nametyp.Name.Nam obj.SrcFile=" + obj.SrcFile)
 					obj.Owner = owner
 					typ := spec.(*ast.TypeSpec)
 					str, ok := typ.Type.(*ast.StructType)
 					if ok == true {
 						for _, fld := range str.Fields.List {
+                                                        mylog("YORK. nametyp.Name.Name,  fld.Names=" +  fld.Names)
 							if fld.Names != nil {
 								switch fld.Type.(type) {
 								case *ast.Ident:
@@ -531,20 +553,24 @@ func generateHandCodedObjectsInformation(listingsFd *os.File, objFileBase string
 								}
 							}
 						}
+                                                mylog("YORK. nametyp.Name.Name=" + typ.Name.Name)
 						objMap[typ.Name.Name] = obj
 					}
 				}
 				lines, err := json.MarshalIndent(objMap, "", " ")
 				if err != nil {
+                                         mylog("YORK. nametyp.Name. Error is ")
 					fmt.Println("Error is ", err)
 				} else {
 					genFile, err := os.Create(genObjInfoFile)
 					if err != nil {
+                                                 mylog("YORK. nametyp.Name.  Failed to open the file")
 						fmt.Println("Failed to open the file", genObjInfoFile)
 						return err
 					}
 					defer genFile.Close()
 					genFile.WriteString(string(lines))
+                                          mylog("YORK. nametyp.Name. string(lines)=" + string(lines))
 				}
 			}
 		}
