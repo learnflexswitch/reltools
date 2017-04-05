@@ -156,4 +156,4 @@ if __name__ == '__main__':
             'rm -rf ' + build_dir,
             'make clean_all'
                 ]
-    executeCommand(command)
+    #executeCommand(command)
