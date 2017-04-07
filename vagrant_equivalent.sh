@@ -15,10 +15,10 @@ sudo tar -C /usr/local -xzf go1.5.3.linux-amd64.tar.gz
 if [ ! -d ~/git ]; then
    mkdir ~/git
 fi
-
+me=$(whoami)
 cd ~/git
-echo "export GOPATH=~/git/snaproute:~/git/external:~/git/generated" >> /home/flex/.bashrc
-echo "export PATH=$PATH:/usr/local/go/bin" >> /home/flex/.bashrc
-echo "export SR_CODE_BASE=/home/flex/git" >> /home/flex/.bashrc
-source /home/flex/.bashrc
+echo "export GOPATH=~/git/snaproute:~/git/external:~/git/generated" >> ~/.bashrc
+echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+echo "export SR_CODE_BASE=/home/$me/git" >> ~/.bashrc
+source ~/.bashrc
 
